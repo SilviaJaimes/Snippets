@@ -433,6 +433,14 @@
 	"dependencias": {
 		"prefix": "dependencia-program",
 		"body": [
+			"builder.Services.AddAuthorization(opts =>",
+			"{",
+			"    opts.DefaultPolicy = new AuthorizationPolicyBuilder()",
+			"         .RequireAuthenticatedUser()",
+			"         .AddRequirements(new GlobalVerbRoleRequirement())",
+			"         .RequireAuthenticatedUser()",
+			"         .Build();",
+			"});",
 			"builder.Services.AddDbContext<ApiContext>(options =>",
 			"{",
 			"    string connectionString = builder.Configuration.GetConnectionString(\"ConexMysql\");",
