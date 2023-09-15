@@ -700,5 +700,160 @@
 			"    }"
 		],
 		"description": "db context"
+	},
+	"HttpGet Action with ProducesResponseType": {
+		"prefix": "Get",
+		"body": [
+			"[HttpGet]",
+			"[ProducesResponseType(StatusCodes.Status200OK)]",
+			"[ProducesResponseType(StatusCodes.Status400BadRequest)]",
+			"public async Task<ActionResult<IEnumerable<${1:nameClass}>>> Get()",
+			"{",
+			"    var ${2:nameVar} = await unitofwork.${3:nameDbSetContext}.GetAllAsync();",
+			"    return mapper.Map<List<$1>>($2);",
+			"}"
+		],
+		"description": "HttpGet Action with ProducesResponseType"
+		},
+	"HttpGet Action with Route and ProducesResponseType": {
+		"prefix": "GetId",
+		"body": [
+			"[HttpGet(\"{id}\")]",
+			"[ProducesResponseType(StatusCodes.Status200OK)]",
+			"[ProducesResponseType(StatusCodes.Status400BadRequest)]",
+
+			"public async Task<ActionResult<$1>> Get(int id)",
+			"{",
+			"    var ${2:nameVar} = await unitofwork.${3:nameDbSetContext}.GetByIdAsync(id);",
+			"    if ($2 == null){",
+			"       return NotFound();",
+			"    }",
+			"    return this.mapper.Map<$1>($2);",
+			"}"
+		],
+		"description": "HttpGet Action with Route and ProducesResponseType"
+	},
+	"GetAllAsync Method": {
+		"prefix": "GetAllAsync",
+		"body": [
+			"public virtual async Task<(int totalRegistros, IEnumerable<T> registros)> GetAllAsync(int pageIndex, int pageSize)",
+			"{",
+			"\tvar totalRegistros = await _context.Set<T>().CountAsync();",
+			"\tvar registros = await _context.Set<T>()",
+			"\t\t.Skip((pageIndex - 1) * pageSize)",
+			"\t\t.Take(pageSize)",
+			"\t\t.ToListAsync();",
+			"\treturn (totalRegistros, registros);",
+			"}"
+		],
+		"description": "Async method to get paged data from database."
+	},
+	"de uno a uno": {
+		"prefix": "one-to-one",
+		"body": [
+			"builder.HasOne(e => e.$1)",
+			".WithOne(p => p.$2)",
+			".HasForeignKey<Jugador>(p => p.$3);"
+		],
+		"description": "de uno a uno"
+	},
+	"las dependencias requeridas para el backend": {
+		"prefix": "Depedencias necesarias",
+		"body": [
+			"/*",
+			"API:",
+			"AspNetCoreRateLimit",
+			"AutoMapper.Extensions.Microsoft.DependencyInjection",
+			"Microsoft.AspNetCore.Authentication.JwtBearer",
+			"Microsoft.AspNetCore.Mvc.Versioning",
+			"Microsoft.AspNetCore.OpenApi",
+			"Microsoft.EntityFrameworkCore.Design",
+			"System.IdentityModel.Tokens.Jwt",
+			"",
+			"DOMINIO:",
+			"FluentValidation.AspNetCore",
+			"itext7.pdfhtml",
+			"Microsoft.EntityFrameworkCore",
+			"",
+			"PERSISTENCIA:",
+			"Microsoft.EntityFrameworkCore",
+			"Pomelo.EntityFrameworkCore.MySql",
+			"*/"
+		],
+		"description": "las dependencias requeridas para el backend"
+	},
+	"metodo Post": {
+		"prefix": "Post",
+		"body": [
+			"[HttpPost]",
+			"[ProducesResponseType(StatusCodes.Status201Created)]",
+			"[ProducesResponseType(StatusCodes.Status400BadRequest)]",
+			"",
+			"public async Task<ActionResult<$1>> Post($1 $2Dto)",
+			"{",
+			"var $2= this.mapper.Map<$4>($2Dto);",
+			"this.unitofwork.$3.Add($2);",
+			"await unitofwork.SaveAsync();",
+			"if($2 == null)",
+			"{",
+			"   return BadRequest();",
+			"}",
+			"$2Dto.Id = $2.Id;",
+			"return CreatedAtAction(nameof(Post), new {id =$2Dto.Id}, $2Dto);",
+			"}"
+		],
+		"description": "metodo Put"
+	},
+	"metodo Put": {
+		"prefix": "Put",
+		"body": [
+			"[HttpPut(\"{id}\")]",
+			"[ProducesResponseType(StatusCodes.Status200OK)]",
+			"[ProducesResponseType(StatusCodes.Status400BadRequest)]",
+			"[ProducesResponseType(StatusCodes.Status404NotFound)]",
+			"",
+			"public async Task<ActionResult<$1>> Put(int id, [FromBody]$1 $2Dto){",
+			"   if($2Dto== null)",
+			"   {",
+			"       return NotFound();",
+			"   }",
+		"    var $2= this.mapper.Map<$3>($2Dto);",
+		"    unitofwork.$4.Update($2);",
+		"    await unitofwork.SaveAsync();",
+		"    return $2Dto;",
+			"}"
+		],
+		"description": "metodo Put"
+	},
+	"metodo Delete": {
+		"prefix": "Delete",
+		"body": [
+			"[HttpDelete(\"{id}\")]",
+			"[ProducesResponseType(StatusCodes.Status204NoContent)]",
+			"[ProducesResponseType(StatusCodes.Status404NotFound)]",
+			"public async Task<IActionResult> Delete(int id){",
+			"   var $1= await unitofwork.$2.GetByIdAsync(id);",
+			"   if($1== null)",
+			"   {",
+			"      return NotFound();",
+			"   }",
+			"   unitofwork.$2.Remove($1);",
+			"   await unitofwork.SaveAsync();",
+			"   return NoContent();",
+			"}"
+		],
+		"description": "metodo Delete"
+	},
+	"meto para traer el Nombre": {
+		"prefix": "GetByUsernameAsync",
+		"body": [
+			"public async Task<User> GetByUsernameAsync(string username)",
+			"        {",
+			"            return await _context.Users",
+			"            .Include(p => p.Rols)",
+			"            .FirstOrDefaultAsync(p =>  p.Username.ToLower() == username.ToLower());",
+			"        }"
+		],
+		"description": "meto para traer el Nombre"
 	}
 }
